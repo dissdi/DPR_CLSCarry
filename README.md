@@ -1,1 +1,1 @@
-All the difference between DPR_practice is DPRModel.py
+All the difference between this project and DPR_practice is DPRModel.py
