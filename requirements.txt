@@ -7,6 +7,7 @@ anyio==4.12.0
 astunparse==1.6.3
 async-timeout==5.0.1
 attrs==25.4.0
+backports.zstd @ file:///D:/bld/bld/rattler-build_backports.zstd_1765057694/work
 Brotli @ file:///D:/bld/brotli-split_1764017006836/work
 certifi @ file:///home/conda/feedstock_root/build_artifacts/certifi_1762976168352/work/certifi
 charset-normalizer @ file:///home/conda/feedstock_root/build_artifacts/charset-normalizer_1760437218288/work
