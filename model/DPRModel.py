@@ -40,9 +40,9 @@ class DPRModel(nn.Module):
         out =  self.p_encoder(**p_input, output_hidden_states=True)
         cls0 = out.last_hidden_state[:, 0, :]
         cls_pooled = torch.zeros_like(cls0)
-        for h in out.hidden_states[:-1]:
+        for h in out.hidden_states[1:]:
             cls_pooled += h[:, 0, :]
-        return cls_pooled/len(out.hidden_states[:-1])
+        return cls_pooled/len(out.hidden_states[1:])
         
     def forward(self, q_emb, p_emb):
         return q_emb @ p_emb.T

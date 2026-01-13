@@ -90,6 +90,7 @@ def build_question_jsonl(
     print(f"Skipped (insufficient negatives): {skipped_no_neg}")
 
 if __name__ == "__main__":
+    print("build train corpus")
     build_question_jsonl(
         input_json_path="data/downloads/data/retriever/nq-train.json",      
         output_train_jsonl_path="data/corpus/train.jsonl",
@@ -97,6 +98,7 @@ if __name__ == "__main__":
         include_answers=False,
         skip_if_insufficient_neg=True,
     )
+    print("build dev corpus")
     build_question_jsonl(
         input_json_path="data/downloads/data/retriever/nq-dev.json",      
         output_train_jsonl_path="data/corpus/dev.jsonl",

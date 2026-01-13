@@ -15,7 +15,8 @@ def get_passage_list(passages_jsonl_path):
     return passage_list
 
 faiss_path = "data/corpus/embeddings/passages.faiss"
-passages_path = "data/nq/passages.jsonl"
+question_path = "data/corpus/dev.jsonl"
+passages_path = "data/corpus/passages.jsonl"
 checkpoint_path = "checkpoints/epoch_002"
 device = torch.device("cuda")
 
@@ -32,19 +33,35 @@ passage_list = get_passage_list(passages_path)
 
 k = 10
 max_length = 128
-while(True):
-    q_text = input("Q> ")
-    if q_text=="break" or q_text=="exit":
-        break
-    q_tokens = model.tokenize(q_text, None, max_length)
-    q_tokens = {k: v.to(device) for k, v in q_tokens.items()}
-    with torch.no_grad():
-        q_vec = model.encode_questions(q_tokens)
-        q_vec = q_vec.detach().cpu().numpy().astype(np.float32)
-        q_vec = np.ascontiguousarray(q_vec)
-        D, I = gpu_index.search(q_vec, k)
+
+# ----------------Retrieval Recall@k-----------------
+with open(question_path, 'r') as qf:
     
-    for j in range(len(I[0])):
-        score = float(D[0][j])
-        row_idx = int(I[0][j])
-        print(f"rank: {j+1}, score: {score}, row_idx: {row_idx}, text: {passage_list[row_idx][:200]}")
+
+
+
+
+
+
+
+
+
+
+
+# ----------------Inference-------------------
+# while(True):
+#     q_text = input("Q> ")
+#     if q_text=="break" or q_text=="exit":
+#         break
+#     q_tokens = model.tokenize(q_text, None, max_length)
+#     q_tokens = {k: v.to(device) for k, v in q_tokens.items()}
+#     with torch.no_grad():
+#         q_vec = model.encode_questions(q_tokens)
+#         q_vec = q_vec.detach().cpu().numpy().astype(np.float32)
+#         q_vec = np.ascontiguousarray(q_vec)
+#         D, I = gpu_index.search(q_vec, k)
+    
+#     for j in range(len(I[0])):
+#         score = float(D[0][j])
+#         row_idx = int(I[0][j])
+#         print(f"rank: {j+1}, score: {score}, row_idx: {row_idx}, text: {passage_list[row_idx][:200]}")
