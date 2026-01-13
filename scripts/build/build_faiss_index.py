@@ -1,29 +1,34 @@
 import numpy as np
 import faiss
-
-# due to environment issue, run on another conda environment
+import json
+import csv
 
 passage_read_path = 'data/corpus/embeddings/passages_emb.npy'
-query_read_path = 'data/corpus/embeddings/queries_emb.npy'
 write_path = 'data/corpus/embeddings/passages.faiss'
+passage_jsonl_path = r'data\downloads\data\wikipedia_split\psgs_w100.tsv'
 
 passages = np.load(passage_read_path)
-queries = np.load(query_read_path)
+pids = []
+with open(passage_jsonl_path, 'r', newline='', encoding='utf-8') as tsv_file:
+    reader = csv.reader(tsv_file, delimiter='\t')
+    first = next(reader, None)
+    if first is not None:
+        if first and first[0].isdigit():
+            pids.append(int(first[0]))
+    for row in reader:
+        pids.append(int(row[0]))
+pids = np.asarray(pids, dtype=np.int64)
 
 d = passages.shape[1] # database dimension
 nb = passages.shape[0] # database size
-nq = queries.shape[0] # num of queries
 
 
 passages = np.asarray(passages, dtype=np.float32, order="C")
-queries  = np.asarray(queries,  dtype=np.float32, order="C")
 
-print(d, nb, nq)
-res = faiss.StandardGpuResources()
-cpu_index = faiss.IndexFlatIP(d)
-gpu_index = faiss.index_cpu_to_gpu(res, 0, cpu_index)   # set res on gpu
-gpu_index.add(passages)
-print(f"Number of vectors in index: {gpu_index.ntotal}")
+print(d, nb)
+quantizer  = faiss.IndexFlatIP(d)
+cpu_index = faiss.IndexIDMap2(quantizer)
+cpu_index.add_with_ids(passages, pids)
 
 # print("FAISS test")
 # k = 10 
@@ -32,5 +37,4 @@ print(f"Number of vectors in index: {gpu_index.ntotal}")
 # print()
 
 print("save to file")
-cpu_index = faiss.index_gpu_to_cpu(gpu_index)   # index res should be loaded on cpu to do write job
 faiss.write_index(cpu_index, write_path)
